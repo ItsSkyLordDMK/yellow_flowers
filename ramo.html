@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ramo de Flores Amarillas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #111;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+    }
+    #ramo-btn, #switch-btn {
+      background: orange;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px #0005;
+      margin-bottom: 18px;
+      width: 90vw;
+      max-width: 340px;
+      display: block;
+    }
+    #ramo-btn:hover, #switch-btn:hover {
+      background: #ff9800;
+    }
+    #ramo-container {
+      position: relative;
+      width: 95vw;
+      height: 70vh;
+      max-width: 500px;
+      max-height: 90vw;
+      margin-bottom: 2vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      touch-action: none;
+    }
+    .stem {
+      position: absolute;
+      bottom: 0;
+      width: 8px;
+      height: 120px;
+      background: linear-gradient(to top, #388e3c 80%, #81c784 100%);
+      border-radius: 8px;
+      z-index: 0;
+      left: 50%;
+      transform: translateX(-50%) rotate(var(--angle, 0deg));
+      box-shadow: 0 0 8px #388e3c44;
+    }
+    .flower {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      z-index: 1;
+      animation: bloom 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    @keyframes bloom {
+      from { transform: scale(0.1) rotate(-90deg);}
+      to   { transform: scale(1) rotate(0deg);}
+    }
+    .petal {
+      position: absolute;
+      width: 22px;
+      height: 32px;
+      background: radial-gradient(circle at 60% 40%, #ffe066 80%, #ffd600 100%);
+      border-radius: 60% 60% 60% 60% / 80% 80% 60% 60%;
+      opacity: 0.95;
+    }
+    .petal1 { transform: rotate(0deg)   translateY(-14px);}
+    .petal2 { transform: rotate(72deg)  translateY(-14px);}
+    .petal3 { transform: rotate(144deg) translateY(-14px);}
+    .petal4 { transform: rotate(216deg) translateY(-14px);}
+    .petal5 { transform: rotate(288deg) translateY(-14px);}
+    .center {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 16px; height: 16px;
+      background: radial-gradient(circle at 60% 40%, #ffe066 80%, #ffeb3b 100%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px 2px #fff70099;
+      border: 2px solid #fffde7;
+    }
+    .bow {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38px;
+      height: 18px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .bow-left, .bow-right {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #ff9800;
+      border-radius: 50% 50% 50% 50% / 60% 60% 100% 100%;
+      top: 0;
+    }
+    .bow-left {
+      left: 0;
+      transform: rotate(-25deg);
+    }
+    .bow-right {
+      right: 0;
+      transform: rotate(25deg);
+    }
+    .bow-center {
+      position: absolute;
+      left: 50%;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      background: #ffb300;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 4px #fff70099;
+      border: 2px solid #fffde7;
+    }
+  </style>
+</head>
+<body>
+  <button id="ramo-btn">Generar Ramo</button>
+  <button id="switch-btn">¿Prefieres Flores Sueltas?</button>
+  <div id="ramo-container">
+    <div class="bow">
+      <div class="bow-left"></div>
+      <div class="bow-right"></div>
+      <div class="bow-center"></div>
+    </div>
+  </div>
+  <script>
+    // Configuración del ramo
+    const NUM_FLOWERS = 11;
+    const RADIUS = 90;
+
+    function createFlower(x, y) {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      flower.style.left = x + 'px';
+      flower.style.top = y + 'px';
+
+      for (let i = 1; i <= 5; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal petal' + i;
+        flower.appendChild(petal);
+      }
+      const center = document.createElement('div');
+      center.className = 'center';
+      flower.appendChild(center);
+
+      return flower;
+    }
+
+    function createStem(x, y, angle) {
+      const stem = document.createElement('div');
+      stem.className = 'stem';
+      stem.style.left = x + 'px';
+      stem.style.bottom = y + 'px';
+      stem.style.setProperty('--angle', angle + 'deg');
+      return stem;
+    }
+
+    function drawBouquet() {
+      const container = document.getElementById('ramo-container');
+      container.querySelectorAll('.flower, .stem').forEach(e => e.remove());
+      const w = container.offsetWidth;
+      const h = container.offsetHeight;
+      const centerX = w / 2;
+      const baseY = h - 40;
+
+      for (let i = 0; i < NUM_FLOWERS; i++) {
+        const angle = Math.PI * (i / (NUM_FLOWERS - 1)) - Math.PI / 2;
+        const r = RADIUS * (0.85 + Math.random() * 0.3);
+        const fx = centerX + Math.cos(angle) * r - 24;
+        const fy = baseY - Math.sin(angle) * r - 24;
+
+        const stemAngle = (angle * 180 / Math.PI) / 2 + (Math.random() - 0.5) * 10;
+        const stem = createStem(fx + 24, 0, stemAngle);
+        container.appendChild(stem);
+
+        const flower = createFlower(fx, fy);
+        container.appendChild(flower);
+      }
+    }
+
+    document.getElementById('ramo-btn').onclick = drawBouquet;
+    document.getElementById('switch-btn').onclick = function() {
+      window.location.href = "yellow_flowers.html";
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(drawBouquet, 50);
+    });
+
+    window.addEventListener('resize', () => {
+      setTimeout(drawBouquet, 50);
+    });
+  </script>
+</body>
+</html>

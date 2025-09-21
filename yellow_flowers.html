@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flores Amarillas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #111;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #flower-btn, #switch-btn {
+      background: orange;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px #0005;
+      margin-bottom: 24px;
+      transition: background 0.2s;
+      width: 90vw;
+      max-width: 340px;
+      display: block;
+    }
+    #flower-btn:hover, #switch-btn:hover {
+      background: #ff9800;
+    }
+    #flowers-container {
+      position: relative;
+      width: 100vw;
+      max-width: 500px;
+      height: 60vh;
+      max-height: 60vw;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .flower {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.7) rotate(0deg);
+      animation: bloom 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    @keyframes bloom {
+      from { transform: translate(-50%, -50%) scale(0.1) rotate(-90deg);}
+      to   { transform: translate(-50%, -50%) scale(0.7) rotate(0deg);}
+    }
+    .petal {
+      position: absolute;
+      width: 28px;
+      height: 40px;
+      background: radial-gradient(circle at 60% 40%, #ffe066 80%, #ffd600 100%);
+      border-radius: 60% 60% 60% 60% / 80% 80% 60% 60%;
+      opacity: 0.95;
+    }
+    .petal1 { transform: rotate(0deg)   translateY(-18px);}
+    .petal2 { transform: rotate(72deg)  translateY(-18px);}
+    .petal3 { transform: rotate(144deg) translateY(-18px);}
+    .petal4 { transform: rotate(216deg) translateY(-18px);}
+    .petal5 { transform: rotate(288deg) translateY(-18px);}
+    .center {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 22px; height: 22px;
+      background: radial-gradient(circle at 60% 40%, #ffe066 80%, #ffeb3b 100%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px 2px #fff70099;
+      border: 2px solid #fffde7;
+    }
+  </style>
+</head>
+<body>
+  <button id="flower-btn">Generar Flor Amarilla</button>
+  <button id="switch-btn">¿Prefieres un ramo?</button>
+  <div id="flowers-container"></div>
+  <script>
+    function randomPosition() {
+      const container = document.getElementById('flowers-container');
+      const w = container.offsetWidth - 80;
+      const h = container.offsetHeight - 80;
+      return {
+        left: Math.random() * w + 20,
+        top: Math.random() * h + 20,
+        rotate: Math.random() * 360
+      };
+    }
+
+    function createFlower() {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      const pos = randomPosition();
+      flower.style.left = pos.left + 'px';
+      flower.style.top = pos.top + 'px';
+      flower.style.transform += ` rotate(${pos.rotate}deg)`;
+
+      for (let i = 1; i <= 5; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal petal' + i;
+        flower.appendChild(petal);
+      }
+      const center = document.createElement('div');
+      center.className = 'center';
+      flower.appendChild(center);
+
+      document.getElementById('flowers-container').appendChild(flower);
+    }
+
+    document.getElementById('flower-btn').onclick = createFlower;
+    document.getElementById('switch-btn').onclick = function() {
+      window.location.href = "ramo.html";
+    };
+  </script>
+</body>
+</html>
